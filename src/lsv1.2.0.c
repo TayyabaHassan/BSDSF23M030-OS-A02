@@ -1,5 +1,5 @@
 #define _XOPEN_SOURCE 700
-
+#include <sys/ioctl.h>   // for ioctl(), TIOCGWINSZ
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -115,10 +115,27 @@ int main(int argc, char *argv[]) {
         if (len > maxlen) maxlen = len;
     }
 
-    // TEMP CHECK: print collected names (one per line) to verify collection
-    for (int i = 0; i < n; ++i) {
-        printf("%s\n", names[i]);
+      /* Step B: display in columns (down then across) */
+
+struct winsize ws;
+int term_width = 80;   // fallback width
+if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == 0 && ws.ws_col > 0)
+    term_width = ws.ws_col;
+
+int col_width = maxlen + 2;              // pad 2 spaces between columns
+int cols = term_width / col_width;
+if (cols < 1) cols = 1;
+int rows = (n + cols - 1) / cols;        // ceiling division
+
+for (int r = 0; r < rows; ++r) {
+    for (int c = 0; c < cols; ++c) {
+        int idx = r + c * rows;          // down-then-across indexing
+        if (idx < n)
+            printf("%-*s", col_width, names[idx]);
     }
+    printf("\n");
+}
+
 
     // free memory
     for (int i = 0; i < n; ++i) free(names[i]);

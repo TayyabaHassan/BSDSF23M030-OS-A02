@@ -13,9 +13,8 @@ BIN_DIR = bin
 
 # Target names
 TARGET = $(BIN_DIR)/ls
-SRC = $(SRC_DIR)/lsv1.3.0.c
-OBJ = $(OBJ_DIR)/lsv1.3.0.o
-
+SRC = $(SRC_DIR)/lsv1.4.0.c
+OBJ = $(OBJ_DIR)/lsv1.4.0.o
 # Default rule (build everything)
 all: $(TARGET)
 
